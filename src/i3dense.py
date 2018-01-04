@@ -17,6 +17,7 @@ class I3DenseNet(torch.nn.Module):
         self.final_time_dim = frame_nb // int(math.pow(
             2,
             transition_nb))  # time_dim is divided by two for each transition
+        self.final_layer_nb = densenet2d.classifier.in_features
         self.classifier = inflate.inflate_linear(densenet2d.classifier,
                                                  self.final_time_dim)
 
@@ -25,7 +26,7 @@ class I3DenseNet(torch.nn.Module):
         out = torch.nn.functional.relu(features)
         out = torch.nn.functional.avg_pool3d(out, kernel_size=(1, 7, 7))
         out = out.permute(0, 2, 1, 3, 4).contiguous().view(
-            -1, self.final_time_dim * 1024)
+            -1, self.final_time_dim * self.final_layer_nb)
         out = self.classifier(out)
         return out
 

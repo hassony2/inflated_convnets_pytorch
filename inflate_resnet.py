@@ -27,9 +27,17 @@ def run_inflater(args):
     class_idx = json.load(open('data/imagenet_class_index.json'))
     imagenet_classes = [class_idx[str(k)][1] for k in range(len(class_idx))]
 
-    resnet = torchvision.models.resnet50(pretrained=True)
+    if args.resnet_nb == 50:
+        resnet = torchvision.models.resnet50(pretrained=True)
+    elif args.resnet_nb == 101:
+        resnet = torchvision.models.resnet101(pretrained=True)
+    elif args.resnet_nb == 152:
+        resnet = torchvision.models.resnet152(pretrained=True)
+    else:
+        raise ValueError('resnet_nb should be in [50|101|152] but got {}'
+                         ).format(args.resnet_nb)
 
-    loader = torch.utils.data.DataLoader(dataset, batch_size=2, shuffle=False)
+    loader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False)
     i3resnet = I3ResNet(copy.deepcopy(resnet), args.frame_nb)
     i3resnet.train()
     i3resnet.cuda()
@@ -81,10 +89,14 @@ def run_inflater(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        'Inflates the 50 version of resnet and runs\
+    parser = argparse.ArgumentParser('Inflates ResNet and runs\
     it on dummy dataset to compare outputs from original and inflated networks\
     (should be the same)')
+    parser.add_argument(
+        '--resnet_nb',
+        type=int,
+        default=50,
+        help='What version of ResNet to use, in [50|101|152]')
     parser.add_argument(
         '--display_samples',
         action='store_true',

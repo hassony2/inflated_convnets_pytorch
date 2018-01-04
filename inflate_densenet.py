@@ -27,9 +27,19 @@ def run_inflater(args):
     class_idx = json.load(open('data/imagenet_class_index.json'))
     imagenet_classes = [class_idx[str(k)][1] for k in range(len(class_idx))]
 
-    densenet = torchvision.models.densenet121(pretrained=True)
+    if args.densenet_nb == 121:
+        densenet = torchvision.models.densenet121(pretrained=True)
+    elif args.densenet_nb == 161:
+        densenet = torchvision.models.densenet161(pretrained=True)
+    elif args.densenet_nb == 169:
+        densenet = torchvision.models.densenet169(pretrained=True)
+    elif args.densenet_nb == 201:
+        densenet = torchvision.models.densenet201(pretrained=True)
+    else:
+        raise ValueError('densenet_nb should be in [50|101|152] but got {}'
+                         ).format(args.densenet_nb)
 
-    loader = torch.utils.data.DataLoader(dataset, batch_size=2, shuffle=False)
+    loader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False)
     i3densenet = I3DenseNet(
         copy.deepcopy(densenet), args.frame_nb, inflate_block_convs=True)
     i3densenet.train()
@@ -79,6 +89,11 @@ if __name__ == "__main__":
         'Inflates the 121 version of densenet and runs\
     it on dummy dataset to compare outputs from original and inflated networks\
     (should be the same)')
+    parser.add_argument(
+        '--densenet_nb',
+        type=int,
+        default=121,
+        help='What version of ResNet to use, in [121|161|169|201]')
     parser.add_argument(
         '--display_samples',
         action='store_true',
