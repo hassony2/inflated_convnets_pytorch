@@ -4,6 +4,10 @@ I3D models transfered from Tensorflow to PyTorch
 This repo contains several scripts that allow to inflate 2D networks according to the technique described in 
 the paper [*Quo Vadis, Action Recognition? A New Model and the Kinetics Dataset*](https://arxiv.org/abs/1705.07750) by Joao Carreira and Andrew Zisserman to PyTorch.
 
+It provides the inflated versions for :
+- ResNet 50, ResNet101, ResNet152
+- DenseNet 121, DenseNet161, DenseNet169, DenseNet201
+
 The original (and official!) tensorflow code inflates the inception-v1 network and can be found [here](https://github.com/deepmind/kinetics-i3d/).
 
 So far the code allows for the inflation of DenseNet and ResNet where the basis block is a Bottleneck block (Resnet >50), and the transfer of 2D ImageNet weights.
@@ -18,9 +22,33 @@ This allows to obtain (up to numerical differences) the same outputs for the 2D 
 
 To inflate the network and run it on a dummy-dataset with comparison between the final predictions between the original and inflated networks run:
 
-- `python inflate_resnet.py`
-- `python inflate_densenet.py`
+- For ResNet 101 for instance, run `python inflate_resnet.py --resnet_nb 101`  (available for ResNet [50|101|152])
 
+- For DenseNet 121 `python inflate_densenet.py --densenet_nb 121` (available for DenseNet [121|161|169|201])
+
+
+# Profiling
+
+Forward pass on  GeForce GTX TITAN Black (6Giga) GPU with batch-size 2:
+
+| Network     | time (s)|
+|-------------|---------|
+| ResNet 50   | 0.6 s  |
+| ResNet 101  | 0.8 s  |
+| ResNet 152  | 1.1 s  |
+| DenseNet 121| 2.6 s  |
+
+Forward pass on  GeForce GTX TITAN Black (6Giga) GPU with batch-size 1:
+
+| Network     | time (s)|
+|-------------|---------|
+| ResNet 50   |  0.1s   |
+| ResNet 101  |  0.3s   |
+| ResNet 152  |  0.5s   |
+| DenseNet 121| 1.3 s   |
+| DenseNet 161| 1.8 s   |
+| DenseNet 169| 1.5 s   |
+| DenseNet 201| 1.7 s   |
 
 ## Note
 
