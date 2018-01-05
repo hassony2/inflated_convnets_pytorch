@@ -1,7 +1,3 @@
-import torch
-from torch.nn.parameter import Parameter
-
-
 def inflate_conv(conv2d,
                  time_dim=3,
                  time_padding=0,
@@ -22,14 +18,14 @@ def inflate_conv(conv2d,
         dilation=dilation,
         stride=stride)
     # Repeat filter time_dim times along time dimension
+    weight_2d = conv2d.weight.data
     if center:
-        weight_3d = torch.zeros_like(conv2d.weight)
-        weight_3d = weight_3d.unsqueeze(2).repeat(1, 1, time_dim, 1, 1).data
+        weight_3d = torch.zeros(*weight_2d.shape)
+        weight_3d = weight_3d.unsqueeze(2).repeat(1, 1, time_dim, 1, 1)
         middle_idx = time_dim // 2
-        weight_3d[:, :, middle_idx, :, :] = conv2d.weight.data
+        weight_3d[:, :, middle_idx, :, :] = weight_2d
     else:
-        weight_3d = conv2d.weight.unsqueeze(2).repeat(1, 1, time_dim, 1,
-                                                      1).data
+        weight_3d = weight_2d.unsqueeze(2).repeat(1, 1, time_dim, 1, 1)
         weight_3d = weight_3d / time_dim
 
     # Assign new params
