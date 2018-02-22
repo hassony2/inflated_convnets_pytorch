@@ -1,5 +1,5 @@
-I3D models transfered from Tensorflow to PyTorch
-================================================
+Inflated I3D models with ImageNet weight transfer in PyTorch
+============================================================
 
 This repo contains several scripts that allow to inflate 2D networks according to the technique described in 
 the paper [*Quo Vadis, Action Recognition? A New Model and the Kinetics Dataset*](https://arxiv.org/abs/1705.07750) by Joao Carreira and Andrew Zisserman to PyTorch.
@@ -10,7 +10,7 @@ It provides the inflated versions for :
 
 The original (and official!) tensorflow code inflates the inception-v1 network and can be found [here](https://github.com/deepmind/kinetics-i3d/).
 
-So far the code allows for the inflation of DenseNet and ResNet where the basis block is a Bottleneck block (Resnet >50), and the transfer of 2D ImageNet weights.
+So far this code allows for the inflation of DenseNet and ResNet where the basis block is a Bottleneck block (Resnet >50), and the transfer of 2D ImageNet weights.
 
 The 3D network is obtained by going through the layers of the 2D network and inflating them one by one.
 The utilities for the inflation (which both inflate the layers and transfer the weights) are located in `src/inflate.py`.
