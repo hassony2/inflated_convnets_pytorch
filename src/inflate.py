@@ -69,22 +69,25 @@ def inflate_pool(pool2d,
                  time_padding=0,
                  time_stride=None,
                  time_dilation=1):
-    kernel_dim = (time_dim, pool2d.kernel_size, pool2d.kernel_size)
-    padding = (time_padding, pool2d.padding, pool2d.padding)
-    if time_stride is None:
-        time_stride = time_dim
-    stride = (time_stride, pool2d.stride, pool2d.stride)
-    if isinstance(pool2d, torch.nn.MaxPool2d):
-        dilation = (time_dilation, pool2d.dilation, pool2d.dilation)
-        pool3d = torch.nn.MaxPool3d(
-            kernel_dim,
-            padding=padding,
-            dilation=dilation,
-            stride=stride,
-            ceil_mode=pool2d.ceil_mode)
-    elif isinstance(pool2d, torch.nn.AvgPool2d):
-        pool3d = torch.nn.AvgPool3d(kernel_dim, stride=stride)
+    if isinstance(pool2d, torch.nn.AdaptiveAvgPool2d):
+        pool3d = torch.nn.AdaptiveAvgPool3d((1, 1, 1))
     else:
-        raise ValueError(
-            '{} is not among known pooling classes'.format(type(pool2d)))
+        kernel_dim = (time_dim, pool2d.kernel_size, pool2d.kernel_size)
+        padding = (time_padding, pool2d.padding, pool2d.padding)
+        if time_stride is None:
+            time_stride = time_dim
+        stride = (time_stride, pool2d.stride, pool2d.stride)
+        if isinstance(pool2d, torch.nn.MaxPool2d):
+            dilation = (time_dilation, pool2d.dilation, pool2d.dilation)
+            pool3d = torch.nn.MaxPool3d(
+                kernel_dim,
+                padding=padding,
+                dilation=dilation,
+                stride=stride,
+                ceil_mode=pool2d.ceil_mode)
+        elif isinstance(pool2d, torch.nn.AvgPool2d):
+            pool3d = torch.nn.AvgPool3d(kernel_dim, stride=stride)
+        else:
+            raise ValueError('{} is not among known pooling classes'.format(type(pool2d)))
+
     return pool3d
