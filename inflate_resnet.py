@@ -40,19 +40,20 @@ def run_inflater(args):
     loader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False)
     i3resnet = I3ResNet(copy.deepcopy(resnet), args.frame_nb)
     i3resnet.train()
-    i3resnet.cuda()
-    resnet.cuda()
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    i3resnet = i3resnet.to(device)
+    resnet = resnet.to(device)
 
     for i, (input_2d, target) in enumerate(loader):
-        target = target.cuda()
+        target = target.to(device)
         target_var = torch.autograd.Variable(target)
-        input_2d_var = torch.autograd.Variable(input_2d.cuda())
+        input_2d_var = torch.autograd.Variable(input_2d.to(device))
 
         out2d = resnet(input_2d_var)
         out2d = out2d.cpu().data
 
         input_3d = input_2d.unsqueeze(2).repeat(1, 1, args.frame_nb, 1, 1)
-        input_3d_var = torch.autograd.Variable(input_3d.cuda())
+        input_3d_var = torch.autograd.Variable(input_3d.to(device))
 
         out3d = i3resnet(input_3d_var)
         out3d = out3d.cpu().data
