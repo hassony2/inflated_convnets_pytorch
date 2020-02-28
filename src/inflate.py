@@ -1,3 +1,6 @@
+from torch.nn.parameter import Parameter
+
+
 def inflate_conv(conv2d,
                  time_dim=3,
                  time_padding=0,
