@@ -50,7 +50,7 @@ class _DenseLayer3d(torch.nn.Sequential):
                     pad_size = int(kernel_size / 2)
                     pad_time = ReplicationPad3d((0, 0, 0, 0, pad_size,
                                                  pad_size))
-                    self.add_module('padding.1', pad_time)
+                    self.add_module('padding-1', pad_time)
                     # Add time dimension of same dim as the space one
                     self.add_module(name,
                                     inflate.inflate_conv(child, kernel_size))
@@ -83,7 +83,7 @@ class _Transition3d(torch.nn.Sequential):
             elif isinstance(layer, torch.nn.Conv2d):
                 if inflate_conv:
                     pad_time = ReplicationPad3d((0, 0, 0, 0, 1, 1))
-                    self.add_module('padding.1', pad_time)
+                    self.add_module('padding-1', pad_time)
                     self.add_module(name, inflate.inflate_conv(layer, 3))
                 else:
                     self.add_module(name, inflate.inflate_conv(layer, 1))
